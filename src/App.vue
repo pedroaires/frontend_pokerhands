@@ -1,17 +1,14 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <img alt="PokerHands logo" src="./assets/logo.png">
+    <router-view />
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: 'App'
+};
 </script>
 
 <style>
@@ -20,7 +17,17 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #2D0741; /* Deep Purple from the new palette */
   margin-top: 60px;
+  background-color: #A6A9B6; /* Light Grey background from the palette */
+}
+
+img {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #B230FD; /* Bright Purple from the palette */
 }
 </style>
