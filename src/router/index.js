@@ -1,10 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import LoginPage from '@/pages/LoginPage.vue';
-import HomePage from '@/pages/HomePage.vue';
+import LoginPage from '@/views/LoginPage.vue';
+import HomePage from '@/views/HomePage.vue';
+import RegisterPage from '@/views/RegisterPage.vue';
+import HandsPage from '@/views/HandsPage.vue';
+
+function isAuthenticated() {
+  const token = localStorage.getItem('token');
+  return !!token;
+}
 
 const routes = [
-  { path: '/', component: LoginPage },
-  { path: '/home', component: HomePage },
+  { path: '/auth/login', component: LoginPage, name: 'login' },
+  { path: '/register', component: RegisterPage, name: 'register' },
+  {
+    path: '/home',
+    component: HomePage,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) {
+        next();
+      } else {
+        next('/auth/login');
+      }
+    },
+    name: 'home',
+  },
+  {
+    path: '/',
+    redirect: '/home', // Redirects '/' to '/home'
+  },
+  {
+    path: '/hands',
+    component: HandsPage,
+    name: 'hands',
+  }
 ];
 
 const router = createRouter({
