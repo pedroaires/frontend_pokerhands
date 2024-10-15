@@ -78,7 +78,7 @@
   </template>
   
   <script>
-  import AuthService from '@/services/auth.service.js';
+  import UserService from '@/services/user.service.js';
   
   export default {
     name: 'RegisterPage',
@@ -108,7 +108,7 @@
             username: this.username,
             password: this.password,
           };
-          const response = await AuthService.register(user);
+          const response = await UserService.register(user);
           if (response) {
             this.$router.push('/auth/login');
           }
