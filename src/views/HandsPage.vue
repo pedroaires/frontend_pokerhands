@@ -1,75 +1,79 @@
 <template>
-    <v-app>
-      <v-main>
-        <v-container>
-          <v-data-table
-            :headers="headers"
-            :items="hands"
-            class="elevation-1"
-          >
-            <!-- Correct slot syntax -->
-            <template v-slot:[`item.player_hand`] = "{ item }">
-              <span>{{ item.player_hand.join(' ') }}</span>
-            </template>
-  
-            <template v-slot:[`item.board`] = "{ item }">
-              <span>{{ item.board.join(' ') }}</span>
-            </template>
-  
-            <template v-slot:[`item.money_won`] = "{ item }">
-              <span :class="item.money_won >= 0 ? 'text-success' : 'text-error'">
-                {{ item.money_won >= 0 ? '+' : '' }}{{ item.money_won }}$
-              </span>
-            </template>
-          </v-data-table>
-        </v-container>
-      </v-main>
-    </v-app>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        // Define the table headers
-        headers: [
-          { text: 'Player Hand', value: 'player_hand' },
-          { text: 'Board', value: 'board' },
-          { text: 'Money Won', value: 'money_won' },
-          { text: 'Stakes', value: 'stakes' },
-          { text: 'EV Diff', value: 'ev_diff' },
-          { text: 'Date', value: 'date' }
-        ],
-        // Sample hand data (this would come from your backend)
-        hands: [
-          {
-            player_hand: ['K', '2'],
-            board: ['5', 'K', 'J', '5', '8'],
-            money_won: 1.36,
-            stakes: 'NL0.25/0.5',
-            ev_diff: 0,
-            date: '3 months ago'
-          },
-          {
-            player_hand: ['K', 'A'],
-            board: ['K', 'J', '5', '8', 'A'],
-            money_won: 1.95,
-            stakes: 'NL0.25/0.5',
-            ev_diff: 0,
-            date: '3 months ago'
-          }
-        ]
-      };
+  <v-app>
+    <v-main>
+      <v-container>
+        <v-data-table
+          :headers="headers"
+          :items="hands"
+          class="elevation-1"
+        >
+          <!-- Correct slot syntax for player hand -->
+          <template v-slot:[`item.heroCards`] = "{ item }">
+            <span v-if="item.heroCards">{{ item.heroCards.join(' ') }}</span>
+            <span v-else>No Cards</span>
+          </template>
+
+          <!-- Correct slot syntax for board -->
+          <template v-slot:[`item.boards`] = "{ item }">
+            <span v-if="item.boards && item.boards.length > 0">{{ item.boards[0].join(' ') }}</span>
+            <span v-else>No Board</span>
+          </template>
+
+          <!-- Correct slot syntax for money won -->
+          <template v-slot:[`item.balance`] = "{ item }">
+            <span :class="item.balance >= 0 ? 'text-success' : 'text-error'">
+              {{ item.balance >= 0 ? '+' : '' }}{{ item.balance }}$
+            </span>
+          </template>
+
+          <!-- Correct slot syntax for date -->
+          <template v-slot:[`item.startDateTime`] = "{ item }">
+            <span>{{ formatDate(item.startDateTime) }}</span>
+          </template>
+        </v-data-table>
+      </v-container>
+    </v-main>
+  </v-app>
+</template>
+
+<script>
+import HandsService from '@/services/hands.service'; // Import the HandsService
+
+export default {
+  data() {
+    return {
+      hands: [], // The data from the backend will be loaded here
+      headers: [
+        { text: 'Player Hand', value: 'heroCards' },
+        { text: 'Board', value: 'boards' },
+        { text: 'Money Won', value: 'balance' },
+        { text: 'Date', value: 'startDateTime' }
+      ]
+    };
+  },
+  async created() {
+    try {
+      const userId = 'USER_ID'; // Replace with actual user ID
+      const response = await HandsService.getHandsByUser(userId);
+      this.hands = response.data.hands; // Assuming the backend returns an array of hands under 'hands'
+    } catch (error) {
+      console.error('Error fetching hands data:', error);
     }
-  };
-  </script>
-  
-  <style scoped>
-  .text-success {
-    color: green;
+  },
+  methods: {
+    formatDate(dateString) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    }
   }
-  .text-error {
-    color: red;
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.text-success {
+  color: green;
+}
+.text-error {
+  color: red;
+}
+</style>
